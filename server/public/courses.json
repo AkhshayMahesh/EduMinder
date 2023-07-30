@@ -1,0 +1,38 @@
+{
+    "CSE":{
+        "1":{
+            "ENIR11":"Energy and Environmental engineering",
+            "MAIR22":"Linear Algebra and Calculus",
+            "PHIR11":"Physics",
+            "PHIR12":"Physics Lab",
+            "CSIR11":"Intro to Programming",
+            "MEIR11":"Basics of Mech",
+            "CEIR11":"Intro to Civil",
+            "PRIR11":"Engineering Practice"
+        },
+        "2":{
+            "CHIR11":"Chemistry",
+            "CHIR12":"Chemistry Lab",
+            "HSIR11":"English for communication",
+            "MAIR12":"Matrices and Calculus",
+            "MEIR12":"Engineering Drawing"
+        }
+    },
+    "ECE":{
+        "1":{
+            "MAIR22":"Linear Algebra and Calculus",
+            "PHIR11":"Physics",
+            "PHIR12":"Physics Lab",
+            "CSIR11":"Intro to Programming",
+            "MEIR11":"Basics of Mech",
+            "CEIR11":"Intro to Civil",
+            "PRIR11":"Engineering Practice"
+        },
+        "2":{
+            "CHIR12":"Chemistry Lab",
+            "HSIR11":"English for communication",
+            "MAIR12":"Matrices and Calculus",
+            "MEIR12":"Engineering Drawing"
+        }
+    }
+}
