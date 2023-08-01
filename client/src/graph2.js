@@ -5,7 +5,10 @@ const Graph2 = ({ categoryTotals, categoryLimits }) => {
     const canvasRef = useRef(null);
 
     useEffect(() => {
-        drawChart();
+        const graph = drawChart();
+        return () => {
+            graph.destroy();
+        }
     }, [categoryTotals, categoryLimits]);
 
     const drawChart = () => {
@@ -20,68 +23,63 @@ const Graph2 = ({ categoryTotals, categoryLimits }) => {
                     backgroundColor: '#AEC8C7',
                     borderWidth: 1,
                 },
+                {
+                    label: 'Limit',
+                    data: Object.values(categoryLimits),
+                    borderColor: '#AEC8C7',
+                    borderWidth: 2,
+                },
             ],
         };
 
         const options = {
             scales: {
-                y: {
-                    beginAtZero: true,
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Categories',
+                        color: '#AEC8C7',
+
+                    },
+                    ticks: {
+                        color: '#AEC8C7'
+                    },
                 },
+                y: {
+                    title: {
+                        display: true,
+                        text: 'Amount',
+                        color: '#AEC8C7'
+                    },
+                    ticks: {
+                        color: '#AEC8C7',
+                        beginAtZero: true,
+                    },
+                }
             },
             maintainAspectRatio: false,
             responsive: true,
-            plugins: {
-                drawLimits: {
-                    categoryLimits: categoryLimits,
-                    color: 'red',
-                    lineWidth: 1,
-                    lineDash: [4, 4], // Optional: To make the line dashed
-                },
-            },
+            // plugins: {
+            //     drawLimits: {
+            //         categoryLimits: categoryLimits,
+            //         color: 'red',
+            //         lineWidth: 1,
+            //         lineDash: [4, 4], // Optional: To make the line dashed
+            //     },
+            // },
         };
 
-        if (categoryLimits) {
-            Chart.register(
-                {
-                    id: 'drawLimits',
-                    beforeDraw(chart) {
-                        const drawLimitsPlugin = chart.config.options.plugins.drawLimits;
-                        const ctx = chart.ctx;
-                        const xAxis = chart.scales.x;
-                        const yAxis = chart.scales.y;
-
-                        ctx.save();
-                        ctx.strokeStyle = drawLimitsPlugin.color;
-                        ctx.lineWidth = drawLimitsPlugin.lineWidth;
-                        ctx.setLineDash(drawLimitsPlugin.lineDash);
-
-                        drawLimitsPlugin.categoryLimits.forEach((limit, index) => {
-                            const pixelPosition = xAxis.getPixelForValue(index);
-                            ctx.beginPath();
-                            ctx.moveTo(pixelPosition, yAxis.getPixelForValue(limit));
-                            ctx.lineTo(pixelPosition + xAxis.getPixelForValue(1) - pixelPosition, yAxis.getPixelForValue(limit));
-                            ctx.stroke();
-                        });
-
-                        ctx.restore();
-                    },
-                },
-                'bar',
-                'drawLimits'
-            );
-        }
-
-        new Chart(ctx, {
+        return new Chart(ctx, {
             type: 'bar',
             data: data,
             options: options,
         });
     };
 
-    return
-    categoryTotals ? (<canvas ref={canvasRef} width="400" height="200"></canvas>)
-        : (<div className='Lists' style={{ height: "60vh" }}>No Suitable Expense data found</div>);
+    return (
+        categoryTotals ? (<div className='Lists' style={{ alignItems: "unset", height: "90%" }}>
+            <canvas ref={canvasRef} width="200" height="60"></canvas></div>)
+            : (<div className='Lists' style={{ height: "60vh" }}>No Suitable Expense data found</div>));
 };
 
 export default Graph2;

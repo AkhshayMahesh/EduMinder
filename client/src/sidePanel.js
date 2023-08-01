@@ -3,6 +3,7 @@ import axios from 'axios'
 import { Link, useNavigate } from "react-router-dom";
 import Layout from "./layout";
 import Graph from './graph';
+import Graph2 from "./graph2";
 import { Carousel } from 'react-responsive-carousel';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
 import { TrendingUp, Calendar, Clipboard, IndianRupee, Bell, Plus, Fingerprint, Trash, CheckCircle } from 'lucide-react';
@@ -43,7 +44,7 @@ const SidePanel = (props) => {
             axios.get('http://localhost:5000/assignments', { withCredentials: true })
                 .then((response) => {
                     const sortedAssignments = response.data.sort((a, b) => new Date(a.due) > new Date(b.due));
-                    console.log(sortedAssignments)
+                    // console.log(sortedAssignments)
                     setAssignments(sortedAssignments);
                     setIsLoad(true)
                 }).catch((error) => {
@@ -105,9 +106,9 @@ const SidePanel = (props) => {
         useEffect(() => {
             axios.get('http://localhost:5000/events', { withCredentials: true })
                 .then((response) => {
-                    console.log(response.data)
+                    // console.log(response.data)
                     const sortedEvents = response.data.sort((a, b) => new Date(a.due) > new Date(b.due));
-                    console.log(sortedEvents)
+                    // console.log(sortedEvents)
                     setEvents(sortedEvents);
                     setIsLoad(true);
                 }).catch((error) => {
@@ -130,7 +131,7 @@ const SidePanel = (props) => {
                         onChange={(index) => setCurrentIndex(index)}
                     >
                         {events.map((assignment, index) => {
-                            const isOverdue = new Date(assignment.due) < new Date();
+                            const isOverdue = new Date(assignment.end) < new Date();
                             return (
                                 <div
                                     key={assignment._id}
@@ -164,11 +165,13 @@ const SidePanel = (props) => {
     };
 
     const ExpenseList = () => {
-        const [expenses, setExpenses] = useState();
+        const [expenses, setExpenses] = useState([]);
         const [credits, setCredits] = useState();
         const [expense, setExpense] = useState();
         const [credit, setCredit] = useState();
+        const [selected, setSelected] = useState("week");
         var typedExpense;
+        const temp = [200, 20, 23, 100, 365, 234, 567]
         const types = ["Food", "Health", "Travel", "Clothing", "Essentials", "Accessories", "Others",]
 
         function formatDateToISO(isoString) {
@@ -196,10 +199,10 @@ const SidePanel = (props) => {
             const getExpenses = () => {
                 axios.get('http://localhost:5000/expenses', { withCredentials: true })
                     .then(async (response) => {
-                        setExpenses(response.data)
+                        setExpenses(response.data);
                         const temp = await response.data.map(({ date, amount }) => ({ date: formatDateToISO(date), amount }));
                         setExpense(temp);
-                        typedExpense = calculateCategoryTotals(expenses)
+                        // typedExpense = calculateCategoryTotals(expenses)
                     }).catch((error) => {
                         console.error('Error fetching events:', error);
                     });
@@ -224,18 +227,28 @@ const SidePanel = (props) => {
                 <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
                     <h1 style={{ margin: "auto" }}>Expenses</h1>
                 </div>
-                <Graph expenses={expense} credits={credit} />
+                {(selected == "week") ?
+                    <Graph expenses={expense} credits={credit} /> :
+                    <Graph2 categoryTotals={calculateCategoryTotals(expenses)} categoryLimits={temp} />
+                }
                 <div className="btn-holder">
                     <div className="add-item" >
                         <Link to="/create-expense">
                             <Plus size={24} /> Expense
                         </Link>
                     </div>
-                    <div className="add-item" >
-                        <Link to="/ ">
-                            Categories
-                        </Link>
-                    </div>
+                    {(selected == "week") ?
+                        (<div className="add-item" >
+                            <button onClick={() => setSelected("types")}>
+                                Categories
+                            </button>
+                        </div>) :
+                        (<div className="add-item" >
+                            <button onClick={() => setSelected("week")}>
+                                Timeline
+                            </button>
+                        </div>)
+                    }
                     <div className="add-item" >
                         <Link to="create-credit">
                             <Plus size={24} /> Credit

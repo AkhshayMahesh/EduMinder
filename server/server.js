@@ -1,7 +1,6 @@
 const express = require('express')
-const app = express()
 const session = require('express-session');
-const bcrypt = require('bcrypt')
+const bcrypt = require('bcrypt');
 const mongoose = require('mongoose')
 const cors = require('cors')
 var cookieParser = require('cookie-parser');
@@ -13,11 +12,14 @@ const axios = require("axios")
 const moment = require('moment');
 const { v4: uuidv4 } = require('uuid');
 const bodyParser = require('body-parser');
-const Profile = require('./models/profileModel.js')
-const Ass = require('./models/assModel.js')
-const Eve= require('./models/eveModel.js')
-const Credit= require('./models/creditModel.js')
-const Expense= require('./models/expenseModel.js')
+const multer = require("multer");
+const Profile = require('./models/profileModel.js');
+const Ass = require('./models/assModel.js');
+const Eve= require('./models/eveModel.js');
+const Credit= require('./models/creditModel.js');
+const Expense= require('./models/expenseModel.js');
+
+const app = express()
 
 const client_id = "300155728118-6h29j4fmc5g5jtnoeb6b84g8v1m90pjc.apps.googleusercontent.com";
 const client_secret = "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";
@@ -36,8 +38,6 @@ const authClient = new google.auth.OAuth2({
     // apiKey: api_key, // Pass the API key here
 });
 
-// authClient.setCredentials({ api_key });
-
 const authLink = authClient.generateAuthUrl({
     access_type: "offline",
     scope: [
@@ -48,6 +48,26 @@ const authLink = authClient.generateAuthUrl({
     prompt: "consent",
     version: "v3",
 })
+
+// const upload = multer({
+//     dest: 'public/images',
+//     fileFilter: (req, file, cb) => {
+//       if (
+//         file.mimetype === 'image/jpeg' ||
+//         file.mimetype === 'image/jpg' ||
+//         file.mimetype === 'image/png'
+//       ) {
+//         cb(null, true);
+//       } else {
+//         cb(new Error('Invalid file type. Only JPEG, JPG, and PNG files are allowed.'));
+//       }
+//     },
+//   });
+  
+//   app.post('/upload', upload.single('image'), async (req, res) => {
+//     const imagePath = `${req.file.filename}`;
+    
+//   });
 
 app.use(
     cors({
